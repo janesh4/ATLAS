@@ -5,11 +5,11 @@ import java.sql.SQLException;
 public class JdbcConnect {
 
 
-	public  Connection connect() {
+    public  Connection connect() {
         // SQLite connection string
-        String url = "jdbc:sqlite:BusPass.db"; // hard code DB 
+        String url = "jdbc:sqlite:BusPass.db"; // hard code DB
         Connection conn = null;
-        
+
         try {
             conn = DriverManager.getConnection(url);
         } catch (SQLException e) {
