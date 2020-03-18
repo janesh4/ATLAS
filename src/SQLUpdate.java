@@ -62,7 +62,7 @@ public class SQLUpdate {
 	 
 	    if (!columnValueMappingForCondition.isEmpty()) {
 	        for (Map.Entry<String, String> entry : columnValueMappingForCondition.entrySet()) {
-	            updateQueryBuilder.append(entry.getKey()).append("='").append(entry.getValue()).append("'");
+	            updateQueryBuilder.append(entry.getKey()).append(" IN (").append(entry.getValue()).append(")");
 	            updateQueryBuilder.append(",");
 	        }
 	    }
@@ -82,7 +82,7 @@ public class SQLUpdate {
 		String table = "bus_table";
 		colValues.put("user_id", "122");
 		colValues.put("dd", "122");
-		where.put("name", "rahul");
+		where.put("name", "'rahul'");
 		
 		String s = sqlUpd.updateSQL(table, colValues , where);
 		System.out.println(s);
