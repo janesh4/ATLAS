@@ -13,6 +13,7 @@ public class SQLUpdate {
 		try (
 				PreparedStatement pstmt = jbc2.connect().prepareStatement(sql)) {
 	    	   	pstmt.executeUpdate();
+	    	   	return true;
 	       		} catch (SQLException e) { System.out.println(e.getMessage());}
 		return false;
 		
@@ -70,6 +71,7 @@ public class SQLUpdate {
 	    updateQueryBuilder = new StringBuilder(updateQueryBuilder.subSequence(0, updateQueryBuilder.length() - 1));
 	 
 	    // Returning the generated UPDATE SQL Query as a String...
+//	    System.out.println(updateQueryBuilder);
 	    return updateQueryBuilder.toString();
 	}
 	
@@ -80,12 +82,17 @@ public class SQLUpdate {
 		HashMap<String, String> colValues = new HashMap<String, String>();
 		HashMap<String, String> where = new HashMap<String, String>();
 		String table = "bus_table";
-		colValues.put("user_id", "122");
-		colValues.put("dd", "122");
-		where.put("name", "'rahul'");
+		String stopname = "E1";
+		String login = "janeshs";
+		String direction = "EAST";
+		colValues.put("stop", stopname);
+		colValues.put("status", "PENDING");
+		where.put("login", "'"+login+"'");
+		where.put("login"," SELECT stop from stop_info where direction= '"+direction+ "'");
 		
 		String s = sqlUpd.updateSQL(table, colValues , where);
 		System.out.println(s);
+		
 	}
 
 }
