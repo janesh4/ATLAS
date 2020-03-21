@@ -218,6 +218,7 @@ public void ChangeBusTypeOfRoute(String route) throws SQLException {
 		colValues.put("category_id",String.valueOf(catSelection));
 		where.put("number_plate", "'"+al.get(busSelection)+"'");
 		su.ExecuteUpdate("bus_table", colValues, where);
+		System.out.println("Bus is Allocated");
 		flagCat = false;
 	}
 	}

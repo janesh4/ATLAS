@@ -13,6 +13,7 @@ public class SQLUpdate {
 		try (
 				PreparedStatement pstmt = jbc2.connect().prepareStatement(sql)) {
 	    	   	pstmt.executeUpdate();
+	    	   	jbc2.connect().close();
 	    	   	return true;
 	       		} catch (SQLException e) { System.out.println(e.getMessage());}
 		return false;
