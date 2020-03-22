@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -15,9 +16,9 @@ public class BusMaster {
 
 
 	
-public Map<String,ArrayList<String>> BusesInRoute(String route) throws SQLException
+public Map<String,ArrayList<String>> BusesInRoute(String route, String sql) throws SQLException
 {
-	String sql = "select number_plate from bus_table where route =  '"+route+"' ";
+	
 	ArrayList<String> al = new ArrayList<String>();
 	Map<String,ArrayList<String>> send = new HashMap(); // 
 	
@@ -25,7 +26,7 @@ public Map<String,ArrayList<String>> BusesInRoute(String route) throws SQLExcept
 	ResultSet rs = sqlRun.SqlSelectStatement(sql);
 	while (rs.next())
             {
-            	al.add(rs.getString("number_plate"));
+            	al.add(rs.getString("bus_id"));
             }  
 	rs.close();
 	
@@ -62,6 +63,7 @@ public Map<String,ArrayList<String>> VehicleDifferentTypes(String SQL) throws SQ
 	
 	SQLSelect sqlRun = new SQLSelect();
 	ResultSet rs = sqlRun.SqlSelectStatement(SQL);
+
 	                   	
 		while (rs.next())
 		{
@@ -109,8 +111,16 @@ boolean allocateBus(String busNum, String route) {
 		String tableName = "bus_table";
 		boolean isUploaded = false;
 		
-		colValues.put("route", route);
-		where.put("bus_id", busNum);
+		if(route == null) {
+			colValues.put("route", null);
+			
+		}else {
+			colValues.put("route", "'"+route+"'");
+		}
+			
+		
+		where.put("bus_id", "'"+busNum+"'");
+
 		isUploaded = su.ExecuteUpdate(tableName, colValues, where);
 		
 		return isUploaded;
@@ -122,8 +132,8 @@ public void AddBusInRoute(String route) throws SQLException
 {	
 	ArrayList<String> al = new ArrayList<String>();
 	Map<String,ArrayList<String>> rec = new HashMap(); // 
-	
-	rec = this.BusesInRoute(route); // To check How many busses are there in route asked by user CALLING
+	String sql1 = "select number_plate from bus_table where route =  '"+route+"' ";
+	rec = this.BusesInRoute(route,sql1); // To check How many busses are there in route asked by user CALLING
 	al = rec.get("numberPlate");
  
     
@@ -181,7 +191,8 @@ public void ChangeBusTypeOfRoute(String route) throws SQLException {
 	ArrayList<String> al = new ArrayList<String>();
 	ArrayList<String> al2 = new ArrayList<String>();
 	Map<String,ArrayList<String>> rec = new HashMap(); // 
-	rec = this.BusesInRoute(route);
+	String sql = "select bus_id from bus_table where route =  '"+route+"' ";
+	rec = this.BusesInRoute(route, sql);
 	al = rec.get("numberPlate");
 	al2 = rec.get("category");
 	
@@ -193,32 +204,62 @@ public void ChangeBusTypeOfRoute(String route) throws SQLException {
 	int busSelection = input.nextInt();
 	
 
-	System.out.println(al.get((busSelection)));//
+
 	System.out.println("Enter the new category.");
 	System.out.println("For 3-Seater enter: 3");
 	System.out.println("For 5-Seater enter: 5");
 	System.out.println("For 7-Seater enter: 7");
 	
+	SQLSelect sq = new SQLSelect();
+	String sql1 = "Select distinct category_id from bus_table where route is null";
+	ResultSet rs = sq.SqlSelectStatement(sql1);
+	ArrayList<Integer> categoryIds = new ArrayList<Integer>();
+	while (rs.next()) {
+		categoryIds.add(rs.getInt("category_id"));
+	}
+	
+	
 	boolean flagCat = true;
 	
 	while(flagCat) {
-	int catSelection = input.nextInt();
+	Integer catSelection = input.nextInt();
 	
-	
+
+
 	if(Integer.parseInt(al2.get(busSelection)) == catSelection) {
 		System.out.println("Bus belongs to same category. Please enter new category.");
 	}
 	else if(catSelection != 3 && catSelection != 5 && catSelection != 7){
 		System.out.println("Please enter as category 3 5 or 7.");
 	}
+	else if(!categoryIds.contains(catSelection)){
+		System.out.println("Please enter some other category. As of now, we don't have bus of this categoty.");
+	}
 	else {
-		SQLUpdate su = new SQLUpdate();
-		Map<String,String> colValues = new HashMap(); // 
-		Map<String,String> where = new HashMap(); // 
-		colValues.put("category_id",String.valueOf(catSelection));
-		where.put("number_plate", "'"+al.get(busSelection)+"'");
-		su.ExecuteUpdate("bus_table", colValues, where);
-		System.out.println("Bus is Allocated");
+		//check selected category bus without any route available ? if available allocate: 1. null->route 2 curr route ko null kar do if not ask him to choose other category.
+		String SQL = "select distinct category_id, count(distinct bus_id) as num from bus_table where route is null group by 1";
+    	Map<String,ArrayList<String>> receive = new HashMap();
+    	receive = this.VehicleDifferentTypes(SQL);    	// CALLING
+    	ArrayList<String> number = new ArrayList<String>();
+    	ArrayList<String> typeBus = new ArrayList<String>();
+
+    	typeBus = receive.get("typeOfVehicle");
+    	number =  receive.get("countOfBuses");
+    	System.out.println("Allocating bus of the category: "+ catSelection);
+    	
+    	String busNum = this.AvailableBus(catSelection.toString());
+    	this.allocateBus(busNum, route);
+
+    	this.allocateBus(al.get(busSelection), null);
+    	SQLUpdate su = new SQLUpdate();
+    	String tableName = "pass_details";
+    	HashMap<String, String> columnValueMappingForSet = new HashMap<String, String>();
+    	HashMap<String, String> columnValueMappingForCondition = new HashMap<String, String>();
+    	columnValueMappingForSet.put("bus_id", busNum);
+    	columnValueMappingForCondition.put("bus_id",al.get(busSelection) );
+    	su.ExecuteUpdate(tableName, columnValueMappingForSet, columnValueMappingForCondition);
+    	
+    	
 		flagCat = false;
 	}
 	}

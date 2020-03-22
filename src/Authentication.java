@@ -38,8 +38,8 @@ public class Authentication {
     
     public static void main(String[] args) throws SQLException  {
     	Authentication auth = new Authentication();
-    	String log = "janeshs";
-    	String pass = "janesh";
+    	String log = "a";
+    	String pass = "a";
     	String type = "user";
     	System.out.println(auth.checkCredentials(log, pass, type));
 

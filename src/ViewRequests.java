@@ -64,6 +64,7 @@ public HashMap<String, Integer> UserOccupyingBus(HashMap<String, Integer> busCap
 	SQLSelect sqlRun3 = new SQLSelect();
 	ResultSet rs3 = sqlRun3.SqlSelectStatement(SQL3);
 	HashMap<String, Integer> userInBus = new HashMap<String, Integer>();
+	
 
 	while (rs3.next())
     {	
@@ -84,8 +85,8 @@ boolean GenerateBussPass(String login, Object object) throws SQLException {
 	LocalDate localDate = LocalDate.now();
 	boolean isUploaded = false;
 	
-	colValues.put("status", "APPROVED");
-	colValues.put("change_date", dtf.format(localDate));
+	colValues.put("status", "'"+"APPROVED"+"'");
+	colValues.put("change_date", "'"+dtf.format(localDate)+"'");
 	where.put("login", "'"+login+"'");
 	isUploaded = su.ExecuteUpdate(tableName, colValues, where);
 	
@@ -141,11 +142,9 @@ public void PendingBusPassRequests() throws SQLException {
 			HashMap<String, Integer> busCap = new HashMap<String, Integer>();
 			busCap = this.ReturnBusCapacity(RoutesFromDB);
 
-
 			HashMap<String, Integer> userInBus = new HashMap<String, Integer>();
 			userInBus = this.UserOccupyingBus(busCap); // handle this
-
-			
+	
 			boolean flag = true;
 			for(int count1 =0; count1<userInBus.size(); count1++)	// This for already occupied bus
 			{

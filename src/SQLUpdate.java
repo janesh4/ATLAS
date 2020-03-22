@@ -9,6 +9,7 @@ public class SQLUpdate {
 	boolean ExecuteUpdate(String tableName, Map<String, String> columnValueMappingForSet, Map<String, String> columnValueMappingForCondition)
 	{	
 		sql = this.updateSQL(tableName, columnValueMappingForSet, columnValueMappingForCondition);
+
 		
 		try (
 				PreparedStatement pstmt = jbc2.connect().prepareStatement(sql)) {
@@ -26,13 +27,13 @@ public class SQLUpdate {
 	    /**
 	     * Removing column that holds NULL value or Blank value...
 	     */
-	    if (!columnValueMappingForSet.isEmpty()) {
-	        for (Map.Entry<String, String> entry : columnValueMappingForSet.entrySet()) {
-	            if(entry.getValue() == null || entry.getValue().equals("")) {
-	                columnValueMappingForSet.remove(entry.getKey());
-	            }
-	        }
-	    }
+//	    if (!columnValueMappingForSet.isEmpty()) {
+//	        for (Map.Entry<String, String> entry : columnValueMappingForSet.entrySet()) {
+//	            if(entry.getValue() == null || entry.getValue().equals("")) {
+//	                columnValueMappingForSet.remove(entry.getKey());
+//	            }
+//	        }
+//	    }
 	 
 	    /**
 	     * Removing column that holds NULL value or Blank value...
@@ -53,7 +54,7 @@ public class SQLUpdate {
 	 
 	    if (!columnValueMappingForSet.isEmpty()) {
 	        for (Map.Entry<String, String> entry : columnValueMappingForSet.entrySet()) {
-	            updateQueryBuilder.append(entry.getKey()).append("='").append(entry.getValue()).append("'");
+	            updateQueryBuilder.append(entry.getKey()).append("=").append(entry.getValue());
 	            updateQueryBuilder.append(",");
 	        }
 	    }
@@ -91,10 +92,13 @@ public class SQLUpdate {
 		colValues.put("status", "PENDING");
 		
 		where.put("login", "'"+login+"'");
-		where.put("login"," SELECT stop from stop_info where direction= '"+direction+ "'");
+//		where.put("login"," SELECT stop from stop_info where direction= '"+direction+ "'");
+//		
+//		String s = sqlUpd.updateSQL(table, colValues , where);
+//		System.out.println(s);
+		sqlUpd.ExecuteUpdate(table, colValues, where);
 		
-		String s = sqlUpd.updateSQL(table, colValues , where);
-		System.out.println(s);
+		
 		
 	}
 
