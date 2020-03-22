@@ -124,9 +124,10 @@ public void PendingBusPassRequests() throws SQLException {
 		
     }
 
-	if (!rs.isBeforeFirst() ) {    
+	if (rs.isBeforeFirst() ) {    
 	    System.out.println("There are zero Pending Requests"); 
 	} 
+	
 	for(int count = 0; count <  pendingLogins.size(); count ++) {
 		String login = pendingLogins.get(count);
 		String stop = pendingStops.get(count);
@@ -140,8 +141,10 @@ public void PendingBusPassRequests() throws SQLException {
 			HashMap<String, Integer> busCap = new HashMap<String, Integer>();
 			busCap = this.ReturnBusCapacity(RoutesFromDB);
 
+
 			HashMap<String, Integer> userInBus = new HashMap<String, Integer>();
 			userInBus = this.UserOccupyingBus(busCap); // handle this
+
 			
 			boolean flag = true;
 			for(int count1 =0; count1<userInBus.size(); count1++)	// This for already occupied bus
@@ -182,7 +185,6 @@ public void PendingBusPassRequests() throws SQLException {
 			}
 		}
 		else {
-			System.out.println("Fetching details for user: '"+login+"'");
 			System.out.println("User: "+login + " request will remain in pending state as there are no active routes for mentioned stop");
 		}
 	}

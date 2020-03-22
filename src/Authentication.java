@@ -7,42 +7,44 @@ public class Authentication {
     private String inputPassword;
     private String	userType;
 
-    boolean checkCredentials(String log, String pass, String type) {
-        JdbcConnect jbc = new JdbcConnect();
-        if(jbc.connect() != null)
-        {
-            String sql = "select login, password, type from user_info ";
-            try(Statement stmt = jbc.connect().createStatement();
-                ResultSet rs = stmt.executeQuery(sql))
-            {
-                while (rs.next())
-                {
-//					System.out.println(rs.getString("login") +  "\t" +
-//					rs.getString("password") + "\t" + rs.getString("type")	);
-                    inputName = rs.getString("login");
-                    inputPassword = rs.getString("password");
-                    userType = rs.getString("type");
-                    if(userType.equals("admin"))
-                    {
-                        if (inputName.equals(log) && inputPassword.equals(pass) && userType.equals(type))
-                        {
-                            return true;
-                        }
-                    }
-                    if(userType.equals("user"))
-                    {
-                        if (inputName.equals(log) && inputPassword.equals(pass) && userType.equals(type))
-                        {
-                            return true;
-                        }
-                    }
+    boolean checkCredentials(String log, String pass, String type) throws SQLException {
 
-                }
-            }catch (SQLException e)
+            String sql = "select login, password, type from user_info where login = '"+log+"' ";
+            SQLSelect sqlRun = new SQLSelect();
+            ResultSet rs = sqlRun.SqlSelectStatement(sql);
+
+            inputName = rs.getString("login");
+            inputPassword = rs.getString("password");
+            userType = rs.getString("type");
+            rs.close();
+            
+            if(userType.equals("admin"))
             {
-                System.out.println(e.getMessage());
+                if (inputName.equals(log) && inputPassword.equals(pass) && userType.equals(type))
+                {
+                    return true;
+                }
             }
-        }
+            if(userType.equals("user"))
+            {
+                if (inputName.equals(log) && inputPassword.equals(pass) && userType.equals(type))
+                {
+                    return true;
+                }
+            }
+
         return false;
     }
+    
+    public static void main(String[] args) throws SQLException  {
+    	Authentication auth = new Authentication();
+    	String log = "janeshs";
+    	String pass = "janesh";
+    	String type = "user";
+    	System.out.println(auth.checkCredentials(log, pass, type));
+
+		
+		
+
+	}
 }

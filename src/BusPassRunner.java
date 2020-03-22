@@ -1,7 +1,8 @@
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class BusPassRunner {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         BusPassRunner runObj = new BusPassRunner();
         System.out.println("Welcome to Amazon Transport Service Portal");
         System.out.println("To continue please select the below:");

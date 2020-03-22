@@ -64,21 +64,23 @@ public class SQLInsert {
 	    insertSQLBuilder.append(")");
 	 
 	    // Returning the generated INSERT SQL Query as a String...
-//	    System.out.println(insertSQLBuilder);
+	    System.out.println(insertSQLBuilder);
 	    return insertSQLBuilder.toString();
 	}
 	
 	
 	public static void main(String[] args) {
-//		SQLInsert sqlIns = new SQLInsert();
-//		HashMap<String, String> colValues = new HashMap<String, String>();
-//		HashMap<String, String> where = new HashMap<String, String>();
-//		String table = "bus_table";
-//		colValues.put("user_id", "122");
-//		colValues.put("dd", "122");
-//		where.put("name", "rahul");
+		SQLInsert sqlIns = new SQLInsert();
+		
+		HashMap<String, String> colValues = new HashMap<String, String>();
+
+		String table = "bus_table";
+		
+		colValues.put("user_id", "122");
+		colValues.put("dd", "122");
+
 //		
-//		boolean s = sqlIns.ExecuteInsert(table, colValues );
+		boolean s = sqlIns.ExecuteInsert(table, colValues );
 //		System.out.println(s);
 //		
 //		SQLInsert si = new SQLInsert();

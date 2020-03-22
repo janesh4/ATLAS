@@ -72,7 +72,7 @@ public class SQLUpdate {
 	    updateQueryBuilder = new StringBuilder(updateQueryBuilder.subSequence(0, updateQueryBuilder.length() - 1));
 	 
 	    // Returning the generated UPDATE SQL Query as a String...
-//	    System.out.println(updateQueryBuilder);
+	    System.out.println(updateQueryBuilder);
 	    return updateQueryBuilder.toString();
 	}
 	
@@ -86,8 +86,10 @@ public class SQLUpdate {
 		String stopname = "E1";
 		String login = "janeshs";
 		String direction = "EAST";
+		
 		colValues.put("stop", stopname);
 		colValues.put("status", "PENDING");
+		
 		where.put("login", "'"+login+"'");
 		where.put("login"," SELECT stop from stop_info where direction= '"+direction+ "'");
 		
