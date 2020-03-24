@@ -194,12 +194,31 @@ public void PendingBusPassRequests() throws SQLException {
 	
 }
 
+public double PercentageOfOccupiedSeatsInRoute(String route) throws SQLException {
+String denominatorSQL = "select sum(category_id) as denom from bus_table where route = '"+route+"'";
+SQLSelect sqlRun = new SQLSelect();
+ResultSet rs = sqlRun.SqlSelectStatement(denominatorSQL);
+Double denominator = rs.getDouble("denom");
+
+String NumeratoeSQL = "select count(distinct user_id) as numer from pass_details a join bus_table b on a.bus_id = b.bus_id where a.route = '"+route+"'";
+SQLSelect sqlRun2 = new SQLSelect();
+ResultSet rs2 = sqlRun2.SqlSelectStatement(NumeratoeSQL);
+Double numerator = rs2.getDouble("numer");
+
+Double percentage = ((numerator/denominator)*100);
+
+return percentage;   
+}
+
 public static void main(String[] args) throws SQLException {
-	ViewRequests vr = new ViewRequests();
-	vr.PendingBusPassRequests();
+    ViewRequests vr = new ViewRequests();
+//    vr.PendingBusPassRequests();
+    vr.PercentageOfOccupiedSeatsInRoute("R1");	
 
 
 }
+
+
 
 
 }

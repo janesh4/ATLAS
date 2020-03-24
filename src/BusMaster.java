@@ -132,7 +132,7 @@ public void AddBusInRoute(String route) throws SQLException
 {	
 	ArrayList<String> al = new ArrayList<String>();
 	Map<String,ArrayList<String>> rec = new HashMap(); // 
-	String sql1 = "select number_plate from bus_table where route =  '"+route+"' ";
+	String sql1 = "select bus_id from bus_table where route =  '"+route+"' ";
 	rec = this.BusesInRoute(route,sql1); // To check How many busses are there in route asked by user CALLING
 	al = rec.get("numberPlate");
  
@@ -269,7 +269,7 @@ public void ChangeBusTypeOfRoute(String route) throws SQLException {
         
 public static void main(String[] args) throws SQLException {
 		BusMaster bm = new BusMaster();
-		bm.ChangeBusTypeOfRoute("R1");
+//		bm.ChangeBusTypeOfRoute("R1");
 //		bm.AddBusInRoute("R1");
 		
 		
