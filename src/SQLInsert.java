@@ -1,20 +1,27 @@
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SQLInsert {
-	JdbcConnect jbc2 = new JdbcConnect();
+	
+	Connection conn;
+	public SQLInsert(Connection conn) {
+		this.conn = conn;
+	}
+
+
+	
 	String sql;
-	boolean ExecuteInsert(String tableName, Map<String, String> columnValueMappingForSet)
+	boolean ExecuteInsert(String tableName, Map<String, String> columnValueMappingForSet) throws ClassNotFoundException
 	{	
 		sql = this.insertSQL(tableName, columnValueMappingForSet);
 		
 		try (
-				PreparedStatement pstmt = jbc2.connect().prepareStatement(sql)) {
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 	    	   	pstmt.executeUpdate();
-	    	   	jbc2.connect().close();
 	    	   	return true;
 	       		} catch (SQLException e) { System.out.println(e.getMessage());}
 		return false;
@@ -69,18 +76,24 @@ public class SQLInsert {
 	}
 	
 	
-	public static void main(String[] args) {
-		SQLInsert sqlIns = new SQLInsert();
-		
-		HashMap<String, String> colValues = new HashMap<String, String>();
+	public static void main(String[] args) throws ClassNotFoundException {
+//		SQLInsert sqlIns = new SQLInsert();
+//		
+//		HashMap<String, String> colValues = new HashMap<String, String>();
+//
+//		String table = "user_info";
+//		
+//		
+//		colValues.put("user_name", "admin");
+//		colValues.put("login", "admin");
+//		colValues.put("password", "admin");
+//		colValues.put("type", "admin");
+//		colValues.put("create_date", "2019-12-01");
+//		colValues.put("change_date", "2020-01-01");
 
-		String table = "bus_table";
-		
-		colValues.put("user_id", "122");
-		colValues.put("dd", "122");
 
 //		
-		boolean s = sqlIns.ExecuteInsert(table, colValues );
+//		boolean s = sqlIns.ExecuteInsert(table, colValues );
 //		System.out.println(s);
 //		
 //		SQLInsert si = new SQLInsert();

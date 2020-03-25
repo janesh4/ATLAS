@@ -13,16 +13,18 @@ import java.util.Set;
 
 public class BusMaster {
 
-
-
+	Connection conn;
+    public BusMaster(Connection conn) {
+    	this.conn = conn;
+	}
 	
-public Map<String,ArrayList<String>> BusesInRoute(String route, String sql) throws SQLException
+public Map<String,ArrayList<String>> BusesInRoute(String route, String sql) throws SQLException, ClassNotFoundException
 {
 	
 	ArrayList<String> al = new ArrayList<String>();
 	Map<String,ArrayList<String>> send = new HashMap(); // 
 	
-	SQLSelect sqlRun = new SQLSelect();
+	SQLSelect sqlRun = new SQLSelect(conn);
 	ResultSet rs = sqlRun.SqlSelectStatement(sql);
 	while (rs.next())
             {
@@ -54,14 +56,14 @@ public Map<String,ArrayList<String>> BusesInRoute(String route, String sql) thro
     return send;
 }
 
-public Map<String,ArrayList<String>> VehicleDifferentTypes(String SQL) throws SQLException{
+public Map<String,ArrayList<String>> VehicleDifferentTypes(String SQL) throws SQLException, ClassNotFoundException{
 	
 	ArrayList<String> number = new ArrayList<String>();
 	ArrayList<String> typeBus = new ArrayList<String>();
 	
 	Map<String,ArrayList<String>> send = new HashMap(); // 
 	
-	SQLSelect sqlRun = new SQLSelect();
+	SQLSelect sqlRun = new SQLSelect(conn);
 	ResultSet rs = sqlRun.SqlSelectStatement(SQL);
 
 	                   	
@@ -90,11 +92,11 @@ public Map<String,ArrayList<String>> VehicleDifferentTypes(String SQL) throws SQ
 	
 }
 
-public String AvailableBus(String enterCategory) throws SQLException {
+public String AvailableBus(String enterCategory) throws SQLException, ClassNotFoundException {
 	
 		String sql = "select bus_id from bus_table where route is null and category_id = '"+enterCategory+"'";
 	    String busNum;  
-		SQLSelect sqlRun = new SQLSelect();
+		SQLSelect sqlRun = new SQLSelect(conn);
 		ResultSet rs = sqlRun.SqlSelectStatement(sql);
 		busNum = rs.getString("bus_id");
 		rs.close();
@@ -103,9 +105,9 @@ public String AvailableBus(String enterCategory) throws SQLException {
 	
 }
 
-boolean allocateBus(String busNum, String route) {
+boolean allocateBus(String busNum, String route) throws ClassNotFoundException {
 	
-		SQLUpdate su = new SQLUpdate();
+		SQLUpdate su = new SQLUpdate(conn);
 		HashMap<String, String> colValues = new HashMap<String, String>();
 		HashMap<String, String> where = new HashMap<String, String>();
 		String tableName = "bus_table";
@@ -128,7 +130,7 @@ boolean allocateBus(String busNum, String route) {
 }
 
 
-public void AddBusInRoute(String route) throws SQLException
+public void AddBusInRoute(String route) throws SQLException, ClassNotFoundException
 {	
 	ArrayList<String> al = new ArrayList<String>();
 	Map<String,ArrayList<String>> rec = new HashMap(); // 
@@ -187,7 +189,7 @@ public void AddBusInRoute(String route) throws SQLException
    
 }
 
-public void ChangeBusTypeOfRoute(String route) throws SQLException {
+public void ChangeBusTypeOfRoute(String route) throws SQLException, ClassNotFoundException {
 	ArrayList<String> al = new ArrayList<String>();
 	ArrayList<String> al2 = new ArrayList<String>();
 	Map<String,ArrayList<String>> rec = new HashMap(); // 
@@ -210,7 +212,7 @@ public void ChangeBusTypeOfRoute(String route) throws SQLException {
 	System.out.println("For 5-Seater enter: 5");
 	System.out.println("For 7-Seater enter: 7");
 	
-	SQLSelect sq = new SQLSelect();
+	SQLSelect sq = new SQLSelect(conn);
 	String sql1 = "Select distinct category_id from bus_table where route is null";
 	ResultSet rs = sq.SqlSelectStatement(sql1);
 	ArrayList<Integer> categoryIds = new ArrayList<Integer>();
@@ -251,7 +253,7 @@ public void ChangeBusTypeOfRoute(String route) throws SQLException {
     	this.allocateBus(busNum, route);
 
     	this.allocateBus(al.get(busSelection), null);
-    	SQLUpdate su = new SQLUpdate();
+    	SQLUpdate su = new SQLUpdate(conn);
     	String tableName = "pass_details";
     	HashMap<String, String> columnValueMappingForSet = new HashMap<String, String>();
     	HashMap<String, String> columnValueMappingForCondition = new HashMap<String, String>();
@@ -267,10 +269,10 @@ public void ChangeBusTypeOfRoute(String route) throws SQLException {
 
 }
         
-public static void main(String[] args) throws SQLException {
-		BusMaster bm = new BusMaster();
+public static void main(String[] args) throws SQLException, ClassNotFoundException {
+//		BusMaster bm = new BusMaster();
 //		bm.ChangeBusTypeOfRoute("R1");
-//		bm.AddBusInRoute("R1");
+////		bm.AddBusInRoute("R1");
 		
 		
 

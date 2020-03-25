@@ -8,7 +8,7 @@ public class RouteMaster {
     JdbcConnect jbc = new JdbcConnect();
     String[] stops;
 
-    void viewAllRoutes() {
+    void viewAllRoutes() throws ClassNotFoundException {
         if(jbc.connect() != null) // check
         {
             String sql = "select distinct route from route_info"; //
@@ -47,7 +47,7 @@ public class RouteMaster {
     }
 
 
-    void viewAllStops() {
+    void viewAllStops() throws ClassNotFoundException {
         if(jbc.connect() != null) // check
         {
             String sql = "select stop_name , area from stop_info order by area"; //

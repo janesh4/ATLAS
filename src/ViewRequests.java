@@ -1,3 +1,4 @@
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -8,9 +9,15 @@ import java.util.HashMap;
 
 public class ViewRequests{
 	
-public ArrayList<String> StopExistsInRoute(String stop) throws SQLException {
+	Connection conn;
+   
+	public ViewRequests(Connection conn) {
+    	this.conn = conn;
+	}
+	
+public ArrayList<String> StopExistsInRoute(String stop) throws SQLException, ClassNotFoundException {
 	String SQL = "select distinct route, stop from stop_info a join route_info b on a.stop = b.stops where stop = '"+stop+"'";
-	SQLSelect sqlRun = new SQLSelect();
+	SQLSelect sqlRun = new SQLSelect(conn);
 	ResultSet rs = sqlRun.SqlSelectStatement(SQL);
 	ArrayList<String> RoutesFromDB = new ArrayList();
 	while (rs.next())
@@ -22,7 +29,7 @@ public ArrayList<String> StopExistsInRoute(String stop) throws SQLException {
 
 }
 
-public HashMap<String, Integer> ReturnBusCapacity(ArrayList<String> RoutesFromDB) throws SQLException{
+public HashMap<String, Integer> ReturnBusCapacity(ArrayList<String> RoutesFromDB) throws SQLException, ClassNotFoundException{
 	String intlist = "";
 	for(int count1 =0; count1<RoutesFromDB.size(); count1++)	
 	{	if(count1==RoutesFromDB.size()-1)
@@ -35,7 +42,7 @@ public HashMap<String, Integer> ReturnBusCapacity(ArrayList<String> RoutesFromDB
 	}
 	String SQL2 = "Select bus_id, category_id from bus_table where route in ("+intlist+")";
 
-	SQLSelect sqlRun2 = new SQLSelect();
+	SQLSelect sqlRun2 = new SQLSelect(conn);
 	ResultSet rs2 = sqlRun2.SqlSelectStatement(SQL2);
 	HashMap<String, Integer> busCap = new HashMap<String, Integer>();
 	while (rs2.next())
@@ -48,7 +55,7 @@ public HashMap<String, Integer> ReturnBusCapacity(ArrayList<String> RoutesFromDB
 	
 }
 
-public HashMap<String, Integer> UserOccupyingBus(HashMap<String, Integer> busCap) throws SQLException{
+public HashMap<String, Integer> UserOccupyingBus(HashMap<String, Integer> busCap) throws SQLException, ClassNotFoundException{
 	String busses ="";		
 	
 	for(int count1 =0; count1<busCap.size(); count1++)	
@@ -61,7 +68,7 @@ public HashMap<String, Integer> UserOccupyingBus(HashMap<String, Integer> busCap
 		}
 	}
 	String SQL3 = "Select bus_id, count(distinct a.user_id) as num from pass_details a join user_info b on a.user_id = b.login  where bus_id in ("+busses+") and status = 'APPROVED' group by 1";
-	SQLSelect sqlRun3 = new SQLSelect();
+	SQLSelect sqlRun3 = new SQLSelect(conn);
 	ResultSet rs3 = sqlRun3.SqlSelectStatement(SQL3);
 	HashMap<String, Integer> userInBus = new HashMap<String, Integer>();
 	
@@ -76,8 +83,8 @@ public HashMap<String, Integer> UserOccupyingBus(HashMap<String, Integer> busCap
 	return userInBus;
 	
 }
-boolean GenerateBussPass(String login, Object object) throws SQLException {
-	SQLUpdate su = new SQLUpdate();
+boolean GenerateBussPass(String login, Object object) throws SQLException, ClassNotFoundException {
+	SQLUpdate su = new SQLUpdate(conn);
 	HashMap<String, String> colValues = new HashMap<String, String>();
 	HashMap<String, String> where = new HashMap<String, String>();
 	String tableName = "user_info";
@@ -90,13 +97,13 @@ boolean GenerateBussPass(String login, Object object) throws SQLException {
 	where.put("login", "'"+login+"'");
 	isUploaded = su.ExecuteUpdate(tableName, colValues, where);
 	
-	SQLSelect sqlRun = new SQLSelect();
+	SQLSelect sqlRun = new SQLSelect(conn);
 	String SQL = "select distinct route from bus_table where bus_id = '"+object+"'";
 	ResultSet rs = sqlRun.SqlSelectStatement(SQL);
 	String route = rs.getString("route");
 	rs.close();
 	
-	SQLInsert si = new SQLInsert();
+	SQLInsert si = new SQLInsert(conn);
 	HashMap<String, String> colValuesInsert = new HashMap<String, String>();
 	String tableName2 = "pass_details";	
 	colValuesInsert.put("bus_id", (String) object);
@@ -111,8 +118,8 @@ boolean GenerateBussPass(String login, Object object) throws SQLException {
 }
 
 	
-public void PendingBusPassRequests() throws SQLException {
-	SQLSelect sqlRun = new SQLSelect();
+public void PendingBusPassRequests() throws SQLException, ClassNotFoundException {
+	SQLSelect sqlRun = new SQLSelect(conn);
 	String SQL = "select login, stop from user_info where type = 'user' and status = 'PENDING' order by date(change_date) ";
 	ResultSet rs = sqlRun.SqlSelectStatement(SQL);
 	ArrayList<String> pendingLogins = new ArrayList(); 
@@ -194,14 +201,14 @@ public void PendingBusPassRequests() throws SQLException {
 	
 }
 
-public double PercentageOfOccupiedSeatsInRoute(String route) throws SQLException {
+public double PercentageOfOccupiedSeatsInRoute(String route) throws SQLException, ClassNotFoundException {
 String denominatorSQL = "select sum(category_id) as denom from bus_table where route = '"+route+"'";
-SQLSelect sqlRun = new SQLSelect();
+SQLSelect sqlRun = new SQLSelect(conn);
 ResultSet rs = sqlRun.SqlSelectStatement(denominatorSQL);
 Double denominator = rs.getDouble("denom");
 
 String NumeratoeSQL = "select count(distinct user_id) as numer from pass_details a join bus_table b on a.bus_id = b.bus_id where a.route = '"+route+"'";
-SQLSelect sqlRun2 = new SQLSelect();
+SQLSelect sqlRun2 = new SQLSelect(conn);
 ResultSet rs2 = sqlRun2.SqlSelectStatement(NumeratoeSQL);
 Double numerator = rs2.getDouble("numer");
 
@@ -211,9 +218,9 @@ return percentage;
 }
 
 public static void main(String[] args) throws SQLException {
-    ViewRequests vr = new ViewRequests();
-//    vr.PendingBusPassRequests();
-    vr.PercentageOfOccupiedSeatsInRoute("R1");	
+//    ViewRequests vr = new ViewRequests();
+////    vr.PendingBusPassRequests();
+//    vr.PercentageOfOccupiedSeatsInRoute("R1");	
 
 
 }

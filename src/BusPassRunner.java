@@ -1,8 +1,10 @@
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Scanner;
 
 public class BusPassRunner {
-    public static void main(String[] args) throws SQLException {
+	static Connection conn = JdbcConnect.connect();
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
         BusPassRunner runObj = new BusPassRunner();
         System.out.println("Welcome to Amazon Transport Service Portal");
         System.out.println("To continue please select the below:");
@@ -15,7 +17,7 @@ public class BusPassRunner {
             Scanner input = new Scanner(System.in);
             int choice = input.nextInt();
 
-            Authentication authCheck = new Authentication();
+            Authentication authCheck = new Authentication(conn);
             Scanner credential_input = new Scanner(System.in);
 
             String userId;

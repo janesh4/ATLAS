@@ -11,12 +11,12 @@ public class User {
     }
 
     RouteMaster calling_route = new RouteMaster();
-    public void viewRoute() {
+    public void viewRoute() throws ClassNotFoundException {
         calling_route.viewAllRoutes();
     }
 
     //To be decided..
-    public void viewStops() {
+    public void viewStops() throws ClassNotFoundException {
         calling_route.viewAllStops();
     }
 

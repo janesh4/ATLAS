@@ -1,23 +1,34 @@
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Authentication {
-    private String inputName;
+	
+    Connection conn;
+	private String inputName;
     private String inputPassword;
     private String	userType;
 
-    boolean checkCredentials(String log, String pass, String type) throws SQLException {
+
+
+    public Authentication(Connection conn) {
+    	this.conn = conn;
+	}
+
+	boolean checkCredentials(String log, String pass, String type) throws SQLException, ClassNotFoundException {
 
             String sql = "select login, password, type from user_info where login = '"+log+"' ";
-            SQLSelect sqlRun = new SQLSelect();
-            ResultSet rs = sqlRun.SqlSelectStatement(sql);
 
+            SQLSelect sqlRun = new SQLSelect(conn);
+            ResultSet rs = sqlRun.SqlSelectStatement(sql);
+            
+            while(rs.next()) {
             inputName = rs.getString("login");
             inputPassword = rs.getString("password");
             userType = rs.getString("type");
-            rs.close();
-            
+			}		
+
             if(userType.equals("admin"))
             {
                 if (inputName.equals(log) && inputPassword.equals(pass) && userType.equals(type))
@@ -36,14 +47,13 @@ public class Authentication {
         return false;
     }
     
-    public static void main(String[] args) throws SQLException  {
-    	Authentication auth = new Authentication();
-    	String log = "a";
-    	String pass = "a";
-    	String type = "user";
+    public static void main(String[] args) throws SQLException, ClassNotFoundException  {
+    	Connection conn = JdbcConnect.connect();
+    	Authentication auth = new Authentication(conn);
+    	String log = "admin";
+    	String pass = "admin";
+    	String type = "admin";
     	System.out.println(auth.checkCredentials(log, pass, type));
-
-		
 		
 
 	}

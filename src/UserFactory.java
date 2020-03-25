@@ -8,7 +8,7 @@ public class UserFactory {
     String userId;
     String Name = null;
 
-    UserFactory(String userId) {
+    UserFactory(String userId) throws ClassNotFoundException {
         JdbcConnect jbc = new JdbcConnect();
         if (jbc.connect() != null) {
             String sql = "select user_name from user_info where login = '" + userId + "'";
@@ -47,7 +47,7 @@ public class UserFactory {
         {}
     }
 
-    void view_controller() {
+    void view_controller() throws ClassNotFoundException {
         System.out.println("Welcome " + Name);
 
         User calling_user = new User(userId);
